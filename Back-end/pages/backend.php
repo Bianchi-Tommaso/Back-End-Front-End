@@ -4,6 +4,7 @@ require ("backendDataBase.php");
 
 if($_SERVER['REQUEST_METHOD'] === 'POST')
 {
+    /*
     $data = readPostData();
 
     $query = "INSERT INTO employees VALUES(DEFAULT, '$data->birthDate', '$data->firstName', '$data->lastName', '$data->gender', '$data->hireDate');";
@@ -13,19 +14,18 @@ if($_SERVER['REQUEST_METHOD'] === 'POST')
         $json_respond = Test($Connessione->query($query));
         header('Content-Type: application/json');
     }
+    */
 }
 else if($_SERVER['REQUEST_METHOD'] === 'GET')
 {
-        $backend = new backendDataBase($_GET['page'], $_GET['size']);
+    $backend = new backendDataBase($_GET['page'], $_GET['size']);
 
-        $json_respond = $backend->GET();
+    $json_respond = $backend->GET();
 
         header('Content-Type: application/json');
 }
 
     echo json_encode($json_respond);
-
-    
 
 
 

@@ -6,28 +6,38 @@ class accessoDB
       private $nomeUtente;
       private $password;
       private $nomeDatabase;
-      private $Connessione;
+      private $dsn;
+      private $connessione;
 
-   function __construct()
+    function __construct()
    {
-      $nomeServer = "172.17.0.1:3306";
+      $nomeServer = "localhost";
       $nomeUtente = "root";
       $password = "1234";
       $nomeDatabase = "mydb";
+      $dsn = 'mysql:host='. $nomeServer . '; dbname=' . $nomeDatabase;
    }
    
    public function OpenCon()
    {      
       //Connessione Con Il DataBase
+
+      $nomeServer = "localhost";
+      $nomeUtente = "root";
+      $password = "1234";
+      $nomeDatabase = "mydb";
+      $dsn = 'mysql:host='. $nomeServer . '; dbname=' . $nomeDatabase;
+
+      //$connessione = new mysqli_connect($nomeServer, $nomeUtente, $password, $nomeDatabase);
       
-      $Connessione = new mysqli_connect($nomeServer, $nomeUtente, $password, $nomeDatabase);
+      $connessione = new PDO($dsn, $nomeUtente, $password);
    
-      return $Connessione;
+      return $connessione;
    }
    
-   public function CloseCon($Connessione)
+   public function CloseCon($connessione)
    {
-      $Connessione->close();
+      $onnessione->close();
    }
 }
 ?>

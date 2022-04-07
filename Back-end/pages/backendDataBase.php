@@ -1,6 +1,7 @@
 <?php
 
 require("../accessoDB/accessoDB.php");
+//require("../accessoDB/accesso.php");
 
 class backendDataBase
 {
@@ -9,16 +10,17 @@ class backendDataBase
     private $connessione;
     private $accesso; 
 
-    function __construct($page, $size)
+     function __construct($page, $size)
     {
         $this->$page = $page;
         $this->$size = $size;
-        $this->$accesso = new accessoDB();
+        //$this->$accesso = new accessoDB();
     }
 
     public function GET()
     {
-        $connessione = OpenCon();
+        $accesso = new accessoDB();
+        $connessione = $accesso->OpenCon();
 
         $queryGet = "SELECT * FROM employees LIMIT $page * $size, $size";
 
@@ -34,7 +36,7 @@ class backendDataBase
 
         $risultato = $connessione->query($contaQuery);
 
-        CloseCon($connessione);
+        $connessione->CloseCon($connessione);
 
         return $risultato;
     }
