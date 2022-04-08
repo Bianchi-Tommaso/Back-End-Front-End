@@ -20,13 +20,12 @@ else if($_SERVER['REQUEST_METHOD'] === 'GET')
 {
     $backend = new backendDataBase($_GET['page'], $_GET['size']);
 
-    $json_respond = $backend->GET();
-
-        header('Content-Type: application/json');
+    $json_respond = $backend->GET($_GET['page'], $_GET['size']);
+    
+    header('Content-Type: application/json');        
 }
 
-    echo json_encode($json_respond);
-
+echo json_encode($json_respond);
 
 
 function readPostData() 

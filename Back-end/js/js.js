@@ -1,4 +1,5 @@
-var index = "http://localhost:8081/pages/backend.php";
+var index = "http://192.168.1.48:8081/pages/backend.php";
+//var index = "http://localhost:8081/pages/backend.php";
 var self, next, last, prev, page, json, totalPages, idModifica;
 
 $(document).ready(function() 
@@ -19,7 +20,7 @@ $(document).ready(function()
   });
 
   function prendiDati(link)   //prende i dati e stampa i dipendeti
-  {
+  { 
       $.get(link, function(data)
       {
           
