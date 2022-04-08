@@ -25,7 +25,7 @@ class backendDataBase
 
         $risultato = $this->Test($connessione->query($queryGet));        
 
-        return $json;
+        return $risultato;
 
     }
 
@@ -51,15 +51,13 @@ class backendDataBase
 
             $json['_embedded'] = array();
             $json['_embedded']['_employees'] = array();
-            $json1['_embedded']['_employees']['_links']['self'] = array();
-            $json2['_embedded']['_employees']['_links']['employee'] = array();
 
-            while($righe = $risultato->fetch_assoc())
+            for(;$righe = $risultato->fetch_assoc();)
             {
-                array_push($json['_embedded']['_employees'], array('id' => $righe["id"], 'birthDate' => $righe["birth_date"], 'firstName' => $righe["first_name"], 'lastName' => $righe["last_name"], 'gender' => $righe["gender"], 'hireDate' => $righe["hire_date"]));
-                $json1['_embedded']['_employees']['_links']['self'] = array('href' => 'http://192.168.1.48:8081/backend.php/' . $righe['id']);
-                $json2['_embedded']['_employees']['_links']['employee'] = array('href' => 'http://192.168.1.48:8081/backend.php/' . $righe["id"]);
-                $json = array_merge($json,$json1,$json2);
+                $oggetto = array(array('id' => $righe["id"], 'birthDate' => $righe["birth_date"], 'firstName' => $righe["first_name"], 'lastName' => $righe["last_name"], 'gender' => $righe["gender"], 'hireDate' => $righe["hire_date"]),
+                    array('_links' => array('self' =>array('href'=>'http://192.168.1.48:8081/backend.php/' . $righe['id']),
+                        'employees' =>array('href'=>'http://192.168.1.48:8081/backend.php/' . $righe['id']))));
+                array_push($json['_embedded']['_employees'], $oggetto);
             }
 
             $x = $page + 1;

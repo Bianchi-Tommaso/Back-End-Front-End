@@ -7,16 +7,7 @@ $(document).ready(function()
 
   $("body").ready(function () 
   {
-    //prendiDati(index);
-
-    $.ajax({
-      type: "GET",
-      url: index,
-      contentType: "application/json",
-      dataType: "json",
-      success: function(data){console.log(data);},
-      error: function(data){console.log(data);}
-    });
+    prendiDati(index);
   });
 
   function prendiDati(link)   //prende i dati e stampa i dipendeti
@@ -25,10 +16,11 @@ $(document).ready(function()
       {
           
           self = data['_links']['self']['href'];      //Link self
-          last = data['_links']['last']['href'];      //Link last
-          page = data['page']['number'];              //pagina
-          totalPages = data['page']['totalPages'];    //pagine totali  
+          //last = data['_links']['last']['href'];      //Link last
+          //page = data['page']['number'];              //pagina
+          //totalPages = data['page']['totalPages'];    //pagine totali  
           json = data;                                //savo data in una variabile
+          console.log(data);
 
           if(page != totalPages - 1)           //controllo se c'è un link next
           {
@@ -37,12 +29,12 @@ $(document).ready(function()
 
           if(page != 0)                       //controllo se c'è un link prev
           {
-            prev = data['_links']['prev']['href'];
+            //prev = data['_links']['prev']['href'];
           }
 
           $("p").html(page + 1);            //stampo il numero della pagina
 
-            disegnaRighe(data['_embedded']['employees']);   //stampo la tabella
+            disegnaRighe(data['_embedded']['_employees']);   //stampo la tabella
       });
   }
 
@@ -171,11 +163,14 @@ $(document).ready(function()
     function disegnaRighe(data)     //Metodo per stampare i dati
     {
         var riga = "";
+
+        console.log(data);
+        console.log(data.length);
         
         for(var i = 0; i < data.length; i++)
         {
-            riga += "<tr> <th scope='row'>" + data[i].id + "</th> " + " <td>" + data[i].firstName + "</td> " +
-            " <td>" + data[i].lastName + "</td> " + " <td data-id = " + data[i].id + ">" + " <button type='button' class='btn btn-danger btn-sm px-3 elimina '> Elimina </button> <button type='button' class='btn btn-warning btn-sm px-3 apri'> Modifica </button></td> </tr>";
+            riga += "<tr> <th scope='row'>" + data[i][0].id + "</th> " + " <td>" + data[i][0].firstName + "</td> " +
+            " <td>" + data[i][0].lastName + "</td> " + " <td data-id = " + data[i][0].id + ">" + " <button type='button' class='btn btn-danger btn-sm px-3 elimina '> Elimina </button> <button type='button' class='btn btn-warning btn-sm px-3 apri'> Modifica </button></td> </tr>";
         }
 
         $("tbody").html(riga);
