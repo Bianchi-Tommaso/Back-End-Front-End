@@ -9,21 +9,20 @@ class backendDataBase
     private $connessione;
     private $accesso; 
 
-     function __construct($page, $size)
+     function __construct()
     {
-        $this->$page = $page;
-        $this->$size = $size;
-        //$this->$accesso = new accessoDB();
+        $this->accesso = new accessoDB();
     }
 
     public function GET($page, $size)
     {
-        $accesso = new accessoDB();
-        $connessione = $accesso->OpenCon();
+        $this->page = $page;
+        $this->size = $size;
+        $this->connessione = $this->accesso->OpenCon();
 
-        $queryGet = "SELECT * FROM employees LIMIT 20";
+        $queryGet = "SELECT * FROM employees LIMIT " .$page * $size.", ".$size;
 
-        $risultato = $this->Test($connessione->query($queryGet));        
+        $risultato = $this->JSON($this->connessione->query($queryGet));        
 
         return $risultato;
 
@@ -31,16 +30,20 @@ class backendDataBase
 
     public function ContaPagine()
     {
-        $contaQuery = "SELECT COUNT(id) FROM emplyees";
+        $tot=0;
+        $contaQuery = "SELECT COUNT(id) FROM employees";
 
-        $risultato = $connessione->query($contaQuery);
+        $risultato = $this->connessione->query($contaQuery);
 
-        $connessione->CloseCon($connessione);
-
-        return $risultato;
+        $this->accesso->CloseCon($this->connessione);
+        for(;$righe = $risultato->fetch_assoc();)
+        {
+            $tot=$righe['COUNT(id)'];
+        }
+        return $tot;
     }
 
-    public function Test($risultato)
+    public function JSON($risultato)
     {
 
         $json = array();
@@ -55,19 +58,21 @@ class backendDataBase
             for(;$righe = $risultato->fetch_assoc();)
             {
                 $oggetto = array(array('id' => $righe["id"], 'birthDate' => $righe["birth_date"], 'firstName' => $righe["first_name"], 'lastName' => $righe["last_name"], 'gender' => $righe["gender"], 'hireDate' => $righe["hire_date"]),
-                    array('_links' => array('self' =>array('href'=>'http://192.168.1.48:8081/backend.php/' . $righe['id']),
-                        'employees' =>array('href'=>'http://192.168.1.48:8081/backend.php/' . $righe['id']))));
-                array_push($json['_embedded']['_employees'], $oggetto);
+                    array('_links' => array('self' =>array('href'=>'http://localhost:8080/pages/backend.php/' . $righe['id']),
+                        'employees' =>array('href'=>'http://localhost:8080/pages/backend.php/' . $righe['id']))));
+                    array_push($json['_embedded']['_employees'], $oggetto);
             }
 
-            $x = $page + 1;
-            $json['_links']['self'] = array('href' => 'http://192.168.1.48:8081/backend.php{?page,size,sort}');
-            $json['_links']['first'] = array('href' => 'http://192.168.1.48:8081/backend.php?page=0&size=20');
-            $json['_links']['next'] = array('href' => 'http://192.168.1.48:8081/backend.php?page= 5 &size=20');
-            //$json['_links']['last'] = array('href' => 'http://192.168.1.48:8081/backend.php?page='. ContaPagine()/20 .'&size=20');
-            //$json['_links']['page'] = array('size' => 20, 'totalElements' => ContaPagine(), 'totalPages' => ContaPagine()/20);
-
-            //$json += "]'_links':{'first':{'href': 'http://192.168.1.48:8081/backend.php?page=0&size=20'},'self':{'href':'http://192.168.1.48:8081/backend.php{?page,size,sort}','templated': true},'next':{'href': 'http://192.168.1.48:8081/backend.php?page=1&size=20'},'last':{'href':'http://192.168.1.48:8081/backend.php?page=15001&size=20'},'profile': {'href': ''}},'page':{'size': 20,'totalElements': 300024,'totalPages': 15002,'number': 0}}"; 
+            $x = $this->page;
+            $x1 = $this->page + 1;
+            $conta = $this->ContaPagine();
+            $conta1 = intval($conta/ 20);
+            $json['_links']['self'] = array('href' => 'http://localhost:8080/pages/backend.php{?page,size,sort}');
+            $json['_links']['first'] = array('href' => 'http://localhost:8080/pages/backend.php?page=0&size=20');
+            $json['_links']['next'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. $x1  .'&size=20');
+            $json['_links']['last'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. ($conta1 - 1) .'&size=20');
+            $json['_links']['prev'] = array('href' => 'http://localhost:8080/pages/backend.php?page=' . ($x - 1) .'&size=20');
+            $json['_links']['page'] = array('size' => 20, 'number' => intval($x), 'totalElements' => $conta, 'totalPages' => $conta1);
             
         }
 

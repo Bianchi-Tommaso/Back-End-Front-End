@@ -6,34 +6,28 @@ class accessoDB
       private $nomeUtente;
       private $password;
       private $nomeDatabase;
-      private $dsn;
       private $connessione;
 
     public function __construct()
    {
-      $nomeServer = "172.17.0.3";
-      $nomeUtente = "root";
-      $password = "1234";
-      $nomeDatabase = "mydb";
+      $this->nomeServer = "172.17.0.1";
+      $this->nomeUtente = "root";
+      $this->password = "1234";
+      $this->nomeDatabase = "mydb";
    }
    
    public function OpenCon()
    {      
       //Connessione Con Il DataBase
 
-      $nomeServer = "172.17.0.1";
-      $nomeUtente = "root";
-      $password = "1234";
-      $nomeDatabase = "mydb";
-
-      $connessione = mysqli_connect($nomeServer, $nomeUtente, $password, $nomeDatabase);
+      $this->connessione = mysqli_connect($this->nomeServer, $this->nomeUtente, $this->password, $this->nomeDatabase);
    
-      return $connessione;
+      return $this->connessione;
    }
    
-   public function CloseCon($connessione)
+   public function CloseCon($c)
    {
-      $onnessione->close();
+      $c->close();
    }
 }
 ?>

@@ -2,6 +2,9 @@
 
 require ("backendDataBase.php");
 
+    $page = $_GET['page'];
+    $size = $_GET['size'];
+
 if($_SERVER['REQUEST_METHOD'] === 'POST')
 {
     /*
@@ -18,14 +21,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST')
 }
 else if($_SERVER['REQUEST_METHOD'] === 'GET')
 {
-    $backend = new backendDataBase($_GET['page'], $_GET['size']);
+    $backend = new backendDataBase();
 
-    $json_respond = $backend->GET($_GET['page'], $_GET['size']);
+    $json_respond = $backend->GET($page, $size);
     
-    header('Content-Type: application/json');        
+    header('Content-Type: application/json');      
+    
+    echo json_encode($json_respond, JSON_UNESCAPED_SLASHES);
 }
 
-echo json_encode($json_respond);
+
 
 
 function readPostData() 

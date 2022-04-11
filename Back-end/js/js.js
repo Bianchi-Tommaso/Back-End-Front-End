@@ -1,5 +1,5 @@
-var index = "http://192.168.1.48:8081/pages/backend.php";
-//var index = "http://localhost:8081/pages/backend.php";
+//var index = "http://192.168.1.48:8081/pages/backend.php";
+var index = "http://localhost:8080/pages/backend.php";
 var self, next, last, prev, page, json, totalPages, idModifica;
 
 $(document).ready(function() 
@@ -7,18 +7,18 @@ $(document).ready(function()
 
   $("body").ready(function () 
   {
-    prendiDati(index);
+    prendiDati(index + "?page=0&size=20");
   });
 
   function prendiDati(link)   //prende i dati e stampa i dipendeti
   { 
       $.get(link, function(data)
       {
-          
+          first = data['_links']['first']['href']; 
           self = data['_links']['self']['href'];      //Link self
-          //last = data['_links']['last']['href'];      //Link last
-          //page = data['page']['number'];              //pagina
-          //totalPages = data['page']['totalPages'];    //pagine totali  
+          last = data['_links']['last']['href'];      //Link last
+          page = data['_links']['page']['number'];              //pagina
+          totalPages = data['_links']['page']['totalPages'];    //pagine totali  
           json = data;                                //savo data in una variabile
           console.log(data);
 
@@ -29,46 +29,38 @@ $(document).ready(function()
 
           if(page != 0)                       //controllo se c'è un link prev
           {
-            //prev = data['_links']['prev']['href'];
+            prev = data['_links']['prev']['href'];
           }
 
-          $("p").html(page + 1);            //stampo il numero della pagina
+          page++;
 
-            disegnaRighe(data['_embedded']['_employees']);   //stampo la tabella
+          $("p").html(page);            //stampo il numero della pagina
+          //console.log("pippo");
+          disegnaRighe(data['_embedded']['_employees']);   //stampo la tabella
       });
   }
 
     $("body").on('click', '.prossimaPagina', function (e)   //evento per andare nella pagina successiva
     {
-          $.get(next, function(data)
-          {
-              prendiDati(next);
-          }); 
+        prendiDati(next);
     });
 
     $("body").on('click', '.precedentePagina', function (e) //evento per andare nella pagina precedente 
     {
           if(page != 0)
-            $.get(prev, function(data)
-            {
               prendiDati(prev);
-            }); 
+    
     });
 
     $("body").on('click', '.ultimaPagina', function (e)   ////evento per andare all'ultima pagina
     { 
-          $.get(last, function(data)
-          {
             prendiDati(last);
-          }); 
+
     });
 
     $("body").on('click', '.primaPagina', function (e)    ////evento per andare alla prima pagina
     {      
-          $.get(index, function(data)
-          {
-            prendiDati(index);
-          }); 
+            prendiDati(first); 
     });
 
     $("body").on('click', '.elimina', function (e)
