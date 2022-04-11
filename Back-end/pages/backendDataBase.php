@@ -28,14 +28,45 @@ class backendDataBase
 
     }
 
+    public function POST($data)
+    {
+        $this->connessione = $this->accesso->OpenCon();
+
+        $queryPost = "INSERT INTO employees VALUES(DEFAULT, '$data->birthDate', '$data->firstName', '$data->lastName', '$data->gender', '$data->hireDate');";
+        $this->connessione->query($queryPost);
+
+        $this->accesso->CloseCon($this->connessione);
+    }
+
+    public function PUT($data)
+    {
+        $this->connessione = $this->accesso->OpenCon();
+
+        $queryPut = "UPDATE employees SET birth_date = '$data->birthDate', first_name = '$data->firstName', last_name = '$data->lastName', gender = '$data->gender', hire_date = '$data->hireDate' WHERE id = '$data->id';";
+        $this->connessione->query($queryPut);
+
+        $this->accesso->CloseCon($this->connessione); 
+    }
+
+    public function DELETE($data)
+    {
+        $this->connessione = $this->accesso->OpenCon();
+
+        $queryDelete = "DELETE FROM employees WHERE id = '$data->id';";
+        $this->connessione->query($queryDelete);
+
+        $this->accesso->CloseCon($this->connessione); 
+    }
+
     public function ContaPagine()
     {
-        $tot=0;
+        $tot = 0;
         $contaQuery = "SELECT COUNT(id) FROM employees";
 
         $risultato = $this->connessione->query($contaQuery);
 
         $this->accesso->CloseCon($this->connessione);
+
         for(;$righe = $risultato->fetch_assoc();)
         {
             $tot=$righe['COUNT(id)'];
@@ -45,7 +76,6 @@ class backendDataBase
 
     public function JSON($risultato)
     {
-
         $json = array();
     
         if($risultato->num_rows > 0)
@@ -63,24 +93,20 @@ class backendDataBase
                     array_push($json['_embedded']['_employees'], $oggetto);
             }
 
-            $x = $this->page;
-            $x1 = $this->page + 1;
+            $pagina = $this->page;
+            $next = $this->page + 1;
             $conta = $this->ContaPagine();
-            $conta1 = intval($conta/ 20);
+            $paginaTotale = intval($conta/ 20);
             $json['_links']['self'] = array('href' => 'http://localhost:8080/pages/backend.php{?page,size,sort}');
             $json['_links']['first'] = array('href' => 'http://localhost:8080/pages/backend.php?page=0&size=20');
-            $json['_links']['next'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. $x1  .'&size=20');
-            $json['_links']['last'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. ($conta1 - 1) .'&size=20');
-            $json['_links']['prev'] = array('href' => 'http://localhost:8080/pages/backend.php?page=' . ($x - 1) .'&size=20');
-            $json['_links']['page'] = array('size' => 20, 'number' => intval($x), 'totalElements' => $conta, 'totalPages' => $conta1);
+            $json['_links']['next'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. $next  .'&size=20');
+            $json['_links']['last'] = array('href' => 'http://localhost:8080/pages/backend.php?page='. $paginaTotale .'&size=20');
+            $json['_links']['prev'] = array('href' => 'http://localhost:8080/pages/backend.php?page=' . ($pagina - 1) .'&size=20');
+            $json['_links']['page'] = array('size' => 20, 'number' => intval($pagina), 'totalElements' => $conta, 'totalPages' => $paginaTotale);
             
         }
-
         return $json;
     }
-
-
-    
 }
 
 ?>

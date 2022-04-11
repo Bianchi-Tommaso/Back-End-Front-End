@@ -4,41 +4,37 @@ require ("backendDataBase.php");
 
     $page = $_GET['page'];
     $size = $_GET['size'];
+    $json_respond;
+    $data = readPostData();
+    $backend = new backendDataBase();
 
 if($_SERVER['REQUEST_METHOD'] === 'POST')
 {
-    /*
-    $data = readPostData();
+    $backend->POST($data);
 
-    $query = "INSERT INTO employees VALUES(DEFAULT, '$data->birthDate', '$data->firstName', '$data->lastName', '$data->gender', '$data->hireDate');";
-    
-    if($Connessione->query($query) === TRUE)
-    {
-        $json_respond = Test($Connessione->query($query));
-        header('Content-Type: application/json');
-    }
-    */
+    $json_respond = $backend->GET(0, 20);
 }
 else if($_SERVER['REQUEST_METHOD'] === 'GET')
 {
-    $backend = new backendDataBase();
-
     $json_respond = $backend->GET($page, $size);
-    
+}
+else if($_SERVER['REQUEST_METHOD'] === 'PUT')
+{
+    $json_respond = $backend->PUT($data);
+}
+else if($_SERVER['REQUEST_METHOD'] === 'DELETE')
+{
+    $json_respond = $backend->DELETE($data);
+}
+
     header('Content-Type: application/json');      
     
     echo json_encode($json_respond, JSON_UNESCAPED_SLASHES);
-}
-
-
-
 
 function readPostData() 
 {
-    // Takes raw data from the request
     $json = file_get_contents('php://input');
 
-    // Converts it into a PHP object
     $data = json_decode($json);
 
     return $data;

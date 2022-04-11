@@ -1,14 +1,27 @@
-.destra
+.destra 
 {
-    float: right;
+    align-items: center;
 }
 
-.centro
-{  margin: auto;
-    margin-left: 35%;
+.centro 
+{
+    margin: auto;
 }
 
-p
+p 
 {
     display: inline;
+}
+
+h3 
+{
+    text-align: center;
+}
+
+table,
+th,
+td 
+{
+    border-bottom: 2px solid black;
+    text-align: center;
 }
